@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}CampusFind - Campus Lost &amp; Found{% endblock %}</title>
+  <meta name="description" content="{% block description %}Report lost and found items on campus, search them, and get belongings back to their owners.{% endblock %}">
+  <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='img/favicon.svg') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='vendor/bootstrap/bootstrap.min.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body class="d-flex flex-column min-vh-100" data-user-id="{{ current_user['id'] if current_user else '' }}">
+  <a class="skip-link" href="#main">Skip to main content</a>
+
+  {# ===== Common header + navigation (identical on every page) ===== #}
+  <header>
+    {% set ep = request.endpoint %}
+    <nav class="navbar navbar-expand-lg cf-navbar" aria-label="Main navigation">
+      <div class="container">
+        <a class="cf-brand" href="{{ url_for('home') }}">
+          <svg viewBox="0 0 32 32" aria-hidden="true" focusable="false"><rect width="32" height="32" rx="8" fill="#0e1a3a"/><path d="M9 7h10.5L25 12.5V25H9z" fill="#ffc82c"/><circle cx="14" cy="12" r="2" fill="#0e1a3a"/><path d="M13 19h8M13 22h5" stroke="#0e1a3a" stroke-width="1.6" stroke-linecap="round"/></svg>
+          CampusFind
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav"
+                aria-controls="mainNav" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="mainNav">
+          <ul class="navbar-nav me-auto ms-lg-4 mb-2 mb-lg-0">
+            <li class="nav-item"><a class="nav-link" href="{{ url_for('home') }}"{% if ep == 'home' %} aria-current="page"{% endif %}>Home</a></li>
+            <li class="nav-item"><a class="nav-link" href="{{ url_for('browse_page') }}"{% if ep == 'browse_page' %} aria-current="page"{% endif %}>Browse items</a></li>
+            <li class="nav-item"><a class="nav-link" href="{{ url_for('report_page') }}"{% if ep == 'report_page' %} aria-current="page"{% endif %}>Report an item</a></li>
+            {% if current_user %}
+            <li class="nav-item"><a class="nav-link" href="{{ url_for('dashboard_page') }}"{% if ep == 'dashboard_page' %} aria-current="page"{% endif %}>Dashboard</a></li>
+            {% endif %}
+          </ul>
+          <div class="d-flex align-items-lg-center flex-column flex-lg-row gap-2">
+            {% if current_user %}
+            <div class="dropdown">
+              <button class="btn btn-outline-primary dropdown-toggle d-inline-flex align-items-center" type="button"
+                      id="userMenu" data-bs-toggle="dropdown" aria-expanded="false">
+                <span class="cf-avatar" aria-hidden="true">{{ current_user['name'][:1]|upper }}</span>{{ current_user['name'].split(' ')[0] }}
+              </button>
+              <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userMenu">
+                <li><a class="dropdown-item" href="{{ url_for('dashboard_page') }}">My dashboard</a></li>
+                <li><a class="dropdown-item" href="{{ url_for('report_page') }}">Report an item</a></li>
+                <li><hr class="dropdown-divider"></li>
+                <li><button class="dropdown-item" type="button" data-action="logout">Log out</button></li>
+              </ul>
+            </div>
+            {% else %}
+            <a class="btn btn-outline-primary" href="{{ url_for('login_page') }}">Log in</a>
+            <a class="btn btn-primary" href="{{ url_for('register_page') }}">Create account</a>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <main id="main" class="flex-grow-1" tabindex="-1">
+    {% block content %}{% endblock %}
+  </main>
+
+  {# ===== Common footer ===== #}
+  <footer class="cf-footer">
+    <div class="container">
+      <div class="row g-4">
+        <div class="col-md-5">
+          <a class="cf-brand mb-2" href="{{ url_for('home') }}">
+            <svg viewBox="0 0 32 32" aria-hidden="true" focusable="false"><rect width="32" height="32" rx="8" fill="#ffc82c"/><path d="M9 7h10.5L25 12.5V25H9z" fill="#0e1a3a"/><circle cx="14" cy="12" r="2" fill="#ffc82c"/><path d="M13 19h8M13 22h5" stroke="#ffc82c" stroke-width="1.6" stroke-linecap="round"/></svg>
+            CampusFind
+          </a>
+          <p class="mb-0">A lost and found portal for students and staff. Report what you lost, post what you found, and get belongings back to the people who miss them.</p>
+        </div>
+        <nav class="col-6 col-md-3 offset-md-1" aria-labelledby="footExplore">
+          <h2 id="footExplore">Explore</h2>
+          <ul>
+            <li><a href="{{ url_for('browse_page') }}">Browse items</a></li>
+            <li><a href="{{ url_for('report_page') }}">Report an item</a></li>
+            <li><a href="{{ url_for('dashboard_page') }}">Dashboard</a></li>
+          </ul>
+        </nav>
+        <nav class="col-6 col-md-3" aria-labelledby="footAccount">
+          <h2 id="footAccount">Account</h2>
+          <ul>
+            {% if current_user %}
+            <li><a href="{{ url_for('dashboard_page') }}">My dashboard</a></li>
+            {% else %}
+            <li><a href="{{ url_for('login_page') }}">Log in</a></li>
+            <li><a href="{{ url_for('register_page') }}">Create account</a></li>
+            {% endif %}
+          </ul>
+        </nav>
+      </div>
+      <div class="cf-footer-bottom">
+        &copy; {{ year }} CampusFind. Web Technology mini project (ICT 3131), School of Computer Engineering, MIT Manipal.
+      </div>
+    </div>
+  </footer>
+
+  {# Live region for toast messages #}
+  <div class="toast-container position-fixed bottom-0 end-0 p-3" id="toastArea" aria-live="polite" aria-atomic="true"></div>
+
+  <script src="{{ url_for('static', filename='vendor/bootstrap/bootstrap.bundle.min.js') }}"></script>
+  <script type="module" src="{{ url_for('static', filename='js/layout.js') }}"></script>
+  {% block scripts %}{% endblock %}
+</body>
+</html>

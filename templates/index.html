@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+{% block title %}CampusFind - Lost something on campus? Someone may have found it{% endblock %}
+
+{% block content %}
+<section class="hero" aria-labelledby="heroTitle">
+  <div class="container">
+    <div class="row align-items-center g-5">
+      <div class="col-lg-7">
+        <h1 id="heroTitle">Lost it on campus? Someone may already have found it.</h1>
+        <p class="lead">CampusFind is where students and staff report lost belongings, post what they have found, and get things back to their owners. Contact details are shared only after a claim is approved.</p>
+
+        <form class="hero-search" action="{{ url_for('browse_page') }}" method="get" role="search" aria-label="Search lost and found items">
+          <label class="visually-hidden" for="heroQuery">Search items</label>
+          <input class="form-control form-control-lg" id="heroQuery" type="search" name="q" maxlength="80" placeholder="Try &quot;umbrella&quot; or &quot;library&quot;">
+          <button class="btn btn-primary btn-lg" type="submit">Search</button>
+        </form>
+
+        <div class="hero-actions">
+          <a class="btn btn-lost" href="{{ url_for('report_page', type='lost') }}">I lost something</a>
+          <a class="btn btn-accent" href="{{ url_for('report_page', type='found') }}">I found something</a>
+        </div>
+      </div>
+
+      <div class="col-lg-5">
+        <div class="hero-tag-wrap">
+          <div class="hero-tag" id="heroTag">
+            {# Replaced by the most recent real report once the page script has loaded #}
+            <article class="tag-card">
+              <div class="tag-head found"><span>Your report here</span></div>
+              <div class="tag-body">
+                <h2 class="tag-title">Nothing is on the board yet</h2>
+                <p class="mb-2 text-muted small">Report a lost or found item and the newest report appears on this tag.</p>
+              </div>
+              <div class="tag-foot"><a class="btn btn-sm btn-outline-primary" href="{{ url_for('report_page') }}">Report an item</a></div>
+            </article>
+          </div>
+        </div>
+        <p class="hero-tag-caption" id="heroTagCaption">The newest report on campus</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="pb-4" aria-label="Current numbers">
+  <div class="container">
+    <dl class="stat-strip row gx-0" id="statStrip">
+      <div class="stat col-6 col-md-3"><dt>Lost items waiting</dt><dd data-stat="open_lost">&ndash;</dd></div>
+      <div class="stat col-6 col-md-3"><dt>Found items waiting</dt><dd data-stat="open_found">&ndash;</dd></div>
+      <div class="stat col-6 col-md-3"><dt>Returned to owners</dt><dd data-stat="resolved">&ndash;</dd></div>
+      <div class="stat col-6 col-md-3"><dt>Members</dt><dd data-stat="members">&ndash;</dd></div>
+    </dl>
+  </div>
+</section>
+
+<section class="py-5" aria-labelledby="howTitle">
+  <div class="container">
+    <h2 id="howTitle" class="mb-4">How it works</h2>
+    <ol class="steps row g-4">
+      <li class="col-md-4">
+        <h3>Report it</h3>
+        <p>Post what you lost or found with a photo, the place and the date. It takes about a minute.</p>
+      </li>
+      <li class="col-md-4">
+        <h3>Search and claim</h3>
+        <p>Filter by category, open a report and send a claim describing something only the owner would know.</p>
+      </li>
+      <li class="col-md-4">
+        <h3>Get it back</h3>
+        <p>The person who posted the report reviews claims. Once yours is approved, you receive their contact details.</p>
+      </li>
+    </ol>
+  </div>
+</section>
+
+<section class="pb-2" aria-labelledby="recentTitle">
+  <div class="container">
+    <div class="section-title">
+      <h2 id="recentTitle">Recently reported</h2>
+      <a href="{{ url_for('browse_page') }}">See all items</a>
+    </div>
+    <div class="row g-4" id="recentGrid" aria-live="polite">
+      <noscript><p class="col-12">Turn on JavaScript to see recent reports, or <a href="{{ url_for('browse_page') }}">open the item list</a>.</p></noscript>
+      {% for _ in range(4) %}<div class="col-sm-6 col-lg-3"><div class="tag-skeleton"></div></div>{% endfor %}
+    </div>
+  </div>
+</section>
+{% endblock %}
+
+{% block scripts %}<script type="module" src="{{ url_for('static', filename='js/home.js') }}"></script>{% endblock %}

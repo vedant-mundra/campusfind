@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block title %}Log in - CampusFind{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+  <div class="auth-wrap">
+    <div class="auth-card">
+      <div class="tag-head found"><span>Welcome back</span></div>
+      <h1 class="h2 mb-1">Log in</h1>
+      <p class="text-muted">Log in to report items, send claims and manage your reports.</p>
+
+      <form id="loginForm" novalidate data-next="{{ next_url }}">
+        <div id="formAlert" class="alert alert-danger d-none" role="alert"></div>
+
+        <div class="mb-3">
+          <label class="form-label" for="email">Email address</label>
+          <input class="form-control" type="email" id="email" name="email" autocomplete="username" required maxlength="120" aria-describedby="email-error">
+          <div class="invalid-feedback" id="email-error"></div>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="password">Password</label>
+          <div class="input-group has-validation">
+            <input class="form-control" type="password" id="password" name="password" autocomplete="current-password" required aria-describedby="password-error">
+            <button class="btn btn-outline-primary" type="button" data-toggle-password="password" aria-pressed="false">Show</button>
+            <div class="invalid-feedback" id="password-error"></div>
+          </div>
+        </div>
+
+        <button class="btn btn-primary w-100" type="submit" id="submitBtn">Log in</button>
+      </form>
+
+      <p class="mt-3 mb-0 text-center">New to CampusFind? <a href="{{ url_for('register_page') }}">Create an account</a></p>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}<script type="module" src="{{ url_for('static', filename='js/auth.js') }}"></script>{% endblock %}

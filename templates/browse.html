@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% block title %}Browse lost and found items - CampusFind{% endblock %}
+
+{% block content %}
+<div class="container">
+  <div class="page-head">
+    <h1>Browse items</h1>
+    <p>Search everything that has been reported. Open a report to see details and send a claim.</p>
+  </div>
+
+  <form class="filter-panel mb-4" id="filterForm" role="search" aria-label="Filter items">
+    <div class="row g-3 align-items-end">
+      <div class="col-lg-4">
+        <label class="form-label" for="q">Search</label>
+        <input class="form-control" type="search" id="q" name="q" maxlength="80" placeholder="Name, description or place" autocomplete="off">
+      </div>
+      <div class="col-sm-6 col-lg-3">
+        <label class="form-label" for="category">Category</label>
+        <select class="form-select" id="category" name="category">
+          <option value="">All categories</option>
+          {% for c in categories %}<option value="{{ c }}">{{ c }}</option>{% endfor %}
+        </select>
+      </div>
+      <div class="col-sm-6 col-lg-2">
+        <label class="form-label" for="sort">Sort by</label>
+        <select class="form-select" id="sort" name="sort">
+          <option value="newest">Newest first</option>
+          <option value="oldest">Oldest first</option>
+        </select>
+      </div>
+      <div class="col-lg-3">
+        <fieldset>
+          <legend class="form-label fs-6 mb-1">Show</legend>
+          <div class="seg">
+            <input type="radio" name="type" id="typeAll" value="" checked><label for="typeAll">All</label>
+            <input type="radio" name="type" id="typeLost" value="lost"><label for="typeLost">Lost</label>
+            <input type="radio" name="type" id="typeFound" value="found"><label for="typeFound">Found</label>
+          </div>
+        </fieldset>
+      </div>
+    </div>
+    <div class="form-check mt-3">
+      <input class="form-check-input" type="checkbox" id="resolved" name="resolved" value="1">
+      <label class="form-check-label" for="resolved">Include items already returned to their owners</label>
+    </div>
+  </form>
+
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <p class="result-count mb-0" id="resultCount" role="status" aria-live="polite">Loading items&hellip;</p>
+    <button class="btn btn-sm btn-outline-primary d-none" type="button" id="clearFilters">Clear filters</button>
+  </div>
+
+  <div id="results" class="row g-4" aria-busy="true"></div>
+  <nav class="mt-4 d-flex justify-content-center" id="pagerNav" aria-label="Result pages"></nav>
+</div>
+
+{# ----- item details + claim form ----- #}
+<div class="modal fade" id="itemModal" tabindex="-1" aria-labelledby="itemModalTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
+    <div class="modal-content" id="itemModalContent">
+      <div class="modal-header tag-head found" id="itemModalHead">
+        <h2 class="modal-title fs-6 m-0" id="itemModalTitle">Item details</h2>
+        <span class="tag-no" id="itemModalNo"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body p-4" id="itemModalBody"></div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}<script type="module" src="{{ url_for('static', filename='js/browse.js') }}"></script>{% endblock %}

@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block title %}{{ 'Server error' if server_error else 'Page not found' }} - CampusFind{% endblock %}
+{% block content %}
+<div class="container notfound">
+  <p class="tag-no-big mb-2">{{ '500' if server_error else '404' }}</p>
+  <h1 class="h2">{{ 'Something went wrong on our side.' if server_error else "We couldn't find that page." }}</h1>
+  <p class="mx-auto text-muted">{{ 'Please try again in a moment.' if server_error else 'It may have been moved, or the link may be mistyped. Maybe someone handed it in at the front desk.' }}</p>
+  <a class="btn btn-primary mt-2" href="{{ url_for('home') }}">Back to the home page</a>
+</div>
+{% endblock %}

@@ -1,0 +1,138 @@
+{% extends "base.html" %}
+{% block title %}Report an item - CampusFind{% endblock %}
+
+{% block content %}
+<div class="container">
+  <div class="page-head">
+    <h1 id="pageTitle">Report an item</h1>
+    <p id="pageIntro">Tell us what you lost or found. The more precise you are, the faster it finds its owner.</p>
+  </div>
+
+  <div id="pageAlert" class="alert alert-danger d-none" role="alert"></div>
+
+  {# ----- shown after a successful submit ----- #}
+  <section id="successPanel" class="panel success-panel d-none" aria-labelledby="successTitle" tabindex="-1">
+    <p class="tag-no-big" id="successTag"></p>
+    <h2 id="successTitle" class="h3"></h2>
+    <p class="mx-auto text-muted" id="successText"></p>
+    <div class="d-flex flex-wrap gap-2 justify-content-center">
+      <a class="btn btn-primary" id="successView" href="#">View the report</a>
+      <a class="btn btn-outline-primary" href="{{ url_for('report_page') }}" id="successAnother">Report another item</a>
+      <a class="btn btn-outline-primary" href="{{ url_for('dashboard_page') }}">Go to dashboard</a>
+    </div>
+  </section>
+
+  <form id="reportForm" novalidate enctype="multipart/form-data" class="mb-5">
+    <div class="row g-4">
+      <div class="col-lg-8">
+        <div class="panel">
+          <div id="formAlert" class="alert alert-danger d-none" role="alert"></div>
+
+          <fieldset class="mb-4">
+            <legend class="form-label fs-6">What happened?</legend>
+            <div class="type-tiles" id="typeTiles">
+              <div>
+                <input type="radio" name="type" id="typeLost" value="lost" required>
+                <label for="typeLost">I lost something<small>Someone may have found it</small></label>
+              </div>
+              <div>
+                <input type="radio" name="type" id="typeFound" value="found" required>
+                <label for="typeFound">I found something<small>Help it get back to its owner</small></label>
+              </div>
+            </div>
+            <div class="invalid-feedback" id="type-error"></div>
+          </fieldset>
+
+          <div class="mb-3">
+            <label class="form-label" for="title">Item name</label>
+            <input class="form-control" type="text" id="title" name="title" required minlength="3" maxlength="80" placeholder="e.g. Black umbrella with wooden handle" aria-describedby="title-error">
+            <div class="invalid-feedback" id="title-error"></div>
+          </div>
+
+          <div class="row g-3 mb-3">
+            <div class="col-md-6">
+              <label class="form-label" for="category">Category</label>
+              <select class="form-select" id="category" name="category" required aria-describedby="category-error">
+                <option value="">Choose a category</option>
+                {% for c in categories %}<option value="{{ c }}">{{ c }}</option>{% endfor %}
+              </select>
+              <div class="invalid-feedback" id="category-error"></div>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label" for="event_date" id="dateLabel">Date</label>
+              <input class="form-control" type="date" id="event_date" name="event_date" required aria-describedby="event_date-error">
+              <div class="invalid-feedback" id="event_date-error"></div>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label" for="location" id="locationLabel">Where?</label>
+            <input class="form-control" type="text" id="location" name="location" required minlength="2" maxlength="80" list="placeList" autocomplete="off" placeholder="e.g. Central Library, second floor" aria-describedby="location-error">
+            <datalist id="placeList">
+              <option value="Central Library"><option value="Food Court"><option value="Academic Block 1">
+              <option value="Academic Block 2"><option value="Hostel Block"><option value="Sports Complex">
+              <option value="Parking Area"><option value="Auditorium"><option value="Main Gate"><option value="Bus Stop">
+            </datalist>
+            <div class="invalid-feedback" id="location-error"></div>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label" for="description">Description</label>
+            <textarea class="form-control" id="description" name="description" rows="4" required minlength="10" maxlength="500" aria-describedby="descHelp description-error" placeholder="Colour, brand, size, marks or stickers. Do not include details only the owner should know."></textarea>
+            <div class="d-flex justify-content-between">
+              <div class="form-text" id="descHelp">10 to 500 characters.</div>
+              <div class="char-count" id="descCount" aria-hidden="true">0 / 500</div>
+            </div>
+            <div class="invalid-feedback" id="description-error"></div>
+          </div>
+
+          <div class="mb-0">
+            <label class="form-label" for="phone">Phone number <span class="fw-normal text-muted">(optional)</span></label>
+            <input class="form-control" type="tel" id="phone" name="phone" maxlength="20" autocomplete="tel" inputmode="tel" placeholder="e.g. 98765 43210" aria-describedby="phoneHelp phone-error">
+            <div class="form-text" id="phoneHelp">Shown only to a person whose claim you approve. Your email is shared the same way.</div>
+            <div class="invalid-feedback" id="phone-error"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-4">
+        <div class="panel">
+          <label class="form-label" for="photo">Photo <span class="fw-normal text-muted">(optional)</span></label>
+          <div class="photo-drop">
+            <div id="photoPreviewBox" class="d-none mb-2"><img id="photoPreview" alt="Preview of the selected photo"></div>
+            <input class="form-control" type="file" id="photo" name="photo" accept="image/jpeg,image/png,image/webp" aria-describedby="photoHelp photo-error">
+            <div class="invalid-feedback" id="photo-error"></div>
+          </div>
+          <div class="form-text" id="photoHelp">JPG, PNG or WEBP, up to 3 MB. A clear photo helps the owner recognise it.</div>
+          <div class="form-check mt-2 d-none" id="removePhotoRow">
+            <input class="form-check-input" type="checkbox" id="removePhoto">
+            <label class="form-check-label" for="removePhoto">Remove the current photo</label>
+          </div>
+        </div>
+
+        <div class="d-grid gap-2 mt-3">
+          <button class="btn btn-primary btn-lg" type="submit" id="submitBtn">Publish report</button>
+          <button class="btn btn-outline-danger d-none" type="button" id="deleteBtn">Delete this report</button>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>
+
+<div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="confirmTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-body p-4">
+        <h2 class="h4" id="confirmTitle">Delete this report?</h2>
+        <p class="text-muted mb-4">This removes the report, its photo and any claims people have sent. It cannot be undone.</p>
+        <div class="d-flex justify-content-end gap-2">
+          <button type="button" class="btn btn-outline-primary" data-bs-dismiss="modal">Keep it</button>
+          <button type="button" class="btn btn-danger" id="confirmDelete">Delete report</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}<script type="module" src="{{ url_for('static', filename='js/report.js') }}"></script>{% endblock %}
